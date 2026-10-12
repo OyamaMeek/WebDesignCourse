@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网页设计与开发 · 第1-3章合并</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      overflow: hidden;
+      color: #1e293b;
+    }
+    #deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      padding: 4vh 5vw 6vh;
+      background: linear-gradient(135deg, #f8fafc 0%, #e8eef7 100%);
+      animation: fadeIn 0.35s ease;
+      overflow-y: auto;
+    }
+    .slide.active { display: flex; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .slide.cover {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      color: #fff;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+    }
+    .slide.cover h1 { font-size: 3.9rem; margin-bottom: 1.1rem; letter-spacing: 3px; }
+    .slide.cover p { font-size: 1.55rem; opacity: 0.92; }
+    .slide.section {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .slide.section h2 { font-size: 2.9rem; letter-spacing: 4px; }
+    .slide h2 {
+      font-size: 2.05rem;
+      color: #0f172a;
+      margin-bottom: 1.1rem;
+      border-left: 8px solid #6366f1;
+      padding-left: 16px;
+      flex-shrink: 0;
+    }
+    .slide.section h2 { border: none; color: #fff; padding: 0; }
+    .slide ul { list-style: none; }
+    .slide ul li {
+      font-size: 1.22rem;
+      line-height: 1.75;
+      padding-left: 26px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+    .slide ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #6366f1;
+      font-weight: bold;
+    }
+    .slide p { font-size: 1.22rem; line-height: 1.75; margin: 5px 0; }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 15px 19px;
+      border-radius: 10px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 1rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      margin: 7px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    code {
+      background: #e0e7ff;
+      color: #4338ca;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 1.05em;
+    }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px 19px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+    .card h3 { color: #4338ca; margin-bottom: 7px; font-size: 1.2rem; }
+    .card p, .card li { font-size: 1.08rem; line-height: 1.65; }
+    .card ul li { font-size: 1.08rem; margin-bottom: 3px; }
+    .badge {
+      display: inline-block;
+      background: #f59e0b;
+      color: #fff;
+      font-size: 0.85rem;
+      padding: 3px 11px;
+      border-radius: 20px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .footer-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 44px;
+      background: rgba(15, 23, 42, 0.88);
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 0.98rem;
+      z-index: 100;
+      backdrop-filter: blur(6px);
+    }
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #0ea5e9, #6366f1);
+      width: 0%;
+      z-index: 200;
+      transition: width 0.3s ease;
+    }
+    .nav-btns button {
+      background: #6366f1;
+      border: none;
+      color: #fff;
+      padding: 6px 17px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 9px;
+      font-size: 0.98rem;
+      transition: 0.2s;
+    }
+    .nav-btns button:hover { background: #4f46e5; }
+    .nav-btns button:disabled { background: #475569; cursor: not-allowed; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+    @media (max-width: 768px) {
+      .slide { padding: 4vh 5vw 7vh; }
+      .slide h2 { font-size: 1.5rem; }
+      .slide ul li, .slide p { font-size: 1.05rem; }
+      .slide.cover h1 { font-size: 2.2rem; }
+      .grid2, .grid3, .two-col { grid-template-columns: 1fr; }
+      pre { font-size: 0.88rem; padding: 11px 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div id="deck">
+
+  <!-- ========== 封面 ========== -->
+  <section class="slide cover active">
+    <h1>网页设计与开发</h1>
+    <p>第1-3章 · 合并教程</p>
+    <p style="font-size:1.1rem;margin-top:1.5rem;opacity:0.8;"> 网页设计简介 / HTML基础 / 文字与段落</p>
+  </section>
+
+  <!-- ========== 第1章 章节页 ========== -->
+  <section class="slide section">
+    <h2>第1章 网页设计简介</h2>
+  </section>
+
+  <!-- 1.1 万维网概述 -->
+  <section class="slide">
+    <h2>1.1 万维网概述</h2>
+    <ul>
+      <li>WWW (World Wide Web) 是基于超文本方式的信息检索服务工具。</li>
+      <li>WWW 系统在教育、科技、商业、媒体等多方面起重要作用。</li>
+      <li>WWW 是 Internet 上最受欢迎的应用之一，极大推动了 Internet 的推广。</li>
+      <li>成功秘诀：HTML 超文本开发语言、URL 统一定位格式、HTTP 超文本传送协议。</li>
+    </ul>
+  </section>
+
+  <!-- 1.2 HTML 语言 -->
+  <section class="slide">
+    <h2>1.2 HTML 语言</h2>
+    <ul>
+      <li>HTML = Hypertext Markup Language，超文本标记语言，构成 Web 页面的主要工具。</li>
+      <li>HTML 文档由很多标记组成，可说明文字、图形、动画、声音、表格、链接等。</li>
+      <li>独立于操作系统平台（UNIX、WINDOWS 等），只需 WWW 浏览器即可访问。</li>
+      <li>网页是浏览器对 HTML 文件进行解释的结果。</li>
+    </ul>
+  </section>
+
+  <!-- 1.3 网页制作开发工具 -->
+  <section class="slide">
+    <h2>1.3 网页制作开发工具</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>编辑工具</h3>
+        <ul>
+          <li>记事本 (Notepad)：Windows 自带，可编写 HTML 代码。</li>
+          <li>EditPlus：支持颜色标记、HTML 标记，支持多种语言。</li>
+          <li>Dreamweaver：专业 HTML 编辑器，可视化设计。</li>
+          <li>VS Code：微软出品，免费开源，功能强大。下载地址：<a href="https://code.visualstudio.com/" target="_blank">点击下载</a></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>浏览工具</h3>
+        <ul>
+          <li>Internet Explorer (IE)：Windows 绑定。</li>
+          <li>Opera、Firefox、腾讯 TT、Chrome（推荐）等。</li>
+          <li>QQ 截图快捷键 Ctrl+Alt+A 可测量像素和取色。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1.3 简单 HTML 示例 -->
+  <section class="slide">
+    <h2>1.3 第一个 HTML 页面</h2>
+    <pre>&lt;!-- 程序 1-1 --&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;我们的班级主页&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h2 align="center"&gt;欢迎来到我们的班级网站&lt;/h2&gt;
+  &lt;br&gt;
+  &lt;p&gt;这是我们开发的第一个网页&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <p>保存为 <code>.html</code> 或 <code>.htm</code> 格式，用浏览器打开即可查看效果。</p>
+  </section>
+
+  <!-- 1.4 相关技术 -->
+  <section class="slide">
+    <h2>1.4 网页制作相关技术</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="color:#4338ca;margin-bottom:6px;">CSS</h3>
+        <ul>
+          <li>层叠样式表 (Cascading Style Sheet)。</li>
+          <li>精确控制布局、字体、颜色、背景等。</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="color:#4338ca;margin-bottom:6px;">JavaScript</h3>
+        <ul>
+          <li>Netscape 开发的脚本语言。</li>
+          <li>实现交互式 Web 网页，如在线填表、联机发布等。</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:16px;font-weight:bold;color:#4338ca;">HTML 是基础架构，CSS 美化页面，JavaScript 实现动态与交互。</p>
+  </section>
+
+  <!-- ========== 第2章 章节页 ========== -->
+  <section class="slide section">
+    <h2>第2章 HTML 基础介绍</h2>
+  </section>
+
+  <!-- 2.1 HTML 文档结构 -->
+  <section class="slide">
+    <h2>2.1 HTML 文档结构</h2>
+    <ul>
+      <li>完整 HTML 文件包含头部 (head) 和主体 (body) 两部分。</li>
+      <li>头部可定义标题、样式等；主体是要显示的信息。</li>
+    </ul>
+    <pre>&lt;!-- 程序 2-1 --&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;一个简单的 HTML 示例&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;欢迎光临我的主页&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+  </section>
+
+  <!-- 2.1.2 头部内容 -->
+  <section class="slide">
+    <h2>2.1.2 头部内容</h2>
+    <div class="two-col">
+      <div>
+        <ul>
+          <li><code>&lt;head&gt;</code> 头部标记，内容不显示在正文中。</li>
+          <li>允许的标记：base, link, meta, title, style, script。</li>
+          <li><code>&lt;title&gt;</code> 指定网页标题，显示在浏览器标题栏。</li>
+        </ul>
+      </div>
+      <div>
+        <pre>&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;我的第一个网站&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- meta 标签 -->
+  <section class="slide">
+    <h2>&lt;meta&gt; 标签</h2>
+    <ul>
+      <li>辅助性标签，向浏览器和搜索引擎提供网页信息。</li>
+      <li>两个主要属性：<code>http-equiv</code> 和 <code>name</code>。</li>
+    </ul>
+    <div class="grid2">
+      <div class="card">
+        <h3>name 属性</h3>
+        <ul>
+          <li>description：网页描述</li>
+          <li>keywords：关键词</li>
+          <li>author：作者</li>
+          <li>viewport：视口设置</li>
+          <li>robots：爬虫行为</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>http-equiv 属性</h3>
+        <ul>
+          <li>expires：网页到期时间</li>
+          <li>pragma：缓存控制</li>
+          <li>refresh：自动刷新</li>
+          <li>set-cookie：cookie 设定</li>
+          <li>content-Type：内容类型</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- viewport 示例 -->
+  <section class="slide">
+    <h2>viewport 常见取值</h2>
+    <pre>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</pre>
+    <ul>
+      <li><code>width=device-width</code>：视口宽度等于设备宽度</li>
+      <li><code>initial-scale=1.0</code>：初始缩放比例 1.0</li>
+      <li><code>minimum-scale=0.5</code>：允许最小缩放 0.5</li>
+      <li><code>maximum-scale=2.0</code>：允许最大缩放 2.0</li>
+      <li><code>user-scalable=no</code>：禁止用户缩放</li>
+    </ul>
+  </section>
+
+  <!-- 主体内容 -->
+  <section class="slide">
+    <h2>2.1.3 主体内容</h2>
+    <ul>
+      <li><code>&lt;body&gt;</code> 与 <code>&lt;/body&gt;</code> 之间放置页面所有内容。</li>
+      <li>图片、文字、表格、表单、超链接等元素。</li>
+    </ul>
+    <pre>&lt;!-- 程序 2-4 --&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;我的第一个页面&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;这里是文章的标题。&lt;/h1&gt;
+  &lt;p&gt;这里是文章的段落。&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+  </section>
+
+  <!-- DOCTYPE -->
+  <section class="slide">
+    <h2>2.1.4 编写网页的开头 · DOCTYPE</h2>
+    <ul>
+      <li>DOCTYPE 是文档类型声明，告诉浏览器用哪个 HTML 版本解析。</li>
+      <li>必须位于 HTML 文档第一行。</li>
+      <li>不写 DOCTYPE 浏览器默认怪异模式；写了则启用标准模式。</li>
+    </ul>
+    <pre>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+  </section>
+
+  <!-- 2.2 HTML 基本语法 -->
+  <section class="slide">
+    <h2>2.2 HTML 基本语法</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="color:#4338ca;">单标记</h3>
+        <p>仅单独使用即可表达完整意思。</p>
+        <pre>&lt;标记名称&gt;
+例如：&lt;br&gt; 表示换行</pre>
+      </div>
+      <div>
+        <h3 style="color:#4338ca;">双标记</h3>
+        <p>由首标记和尾标记构成，成对使用。</p>
+        <pre>&lt;标记名称&gt;内容&lt;/标记名称&gt;
+例如：&lt;b&gt;粗体&lt;/b&gt;</pre>
+      </div>
+    </div>
+    <p style="margin-top:12px;">标记可以嵌套，但不能交叉嵌套。</p>
+  </section>
+
+  <!-- 属性语法 -->
+  <section class="slide">
+    <h2>2.2.2 属性语法</h2>
+    <ul>
+      <li>属性写在首标记内，与标记名之间有空格。</li>
+      <li>属性值可用引号，也可不用。</li>
+    </ul>
+    <pre>&lt;标记名称 属性名1="属性值" 属性名2="属性值"&gt;
+例如：&lt;hr size="5px" align="center"&gt;</pre>
+  </section>
+
+  <!-- 注释 -->
+  <section class="slide">
+    <h2>2.3 注释</h2>
+    <ul>
+      <li>用于在源码中插入注释，浏览器会忽略。</li>
+      <li>提高代码可读性，便于维护。</li>
+    </ul>
+    <pre>&lt;!-- 注释内容 --&gt;</pre>
+  </section>
+
+  <!-- 注意事项 -->
+  <section class="slide">
+    <h2>2.4 编写 HTML 文件的注意事项</h2>
+    <ul>
+      <li><code>&lt;</code> 和 <code>&gt;</code> 是标记的开始和结束，元素必须关闭。</li>
+      <li>标记可嵌套，但不能交叉；回车和空格在代码中不起作用。</li>
+      <li>属性值建议用引号括起；标签名和属性建议小写。</li>
+      <li>使用缩进风格，便于阅读和维护。</li>
+      <li>文件扩展名 <code>.htm</code> 或 <code>.html</code>，建议统一用 <code>.html</code>。</li>
+      <li>文件名由英文字母、数字、下划线组成，避免特殊符号。</li>
+      <li>网站首页一般为 <code>index.html</code> 或 <code>default.html</code>。</li>
+    </ul>
+  </section>
+
+  <!-- 编写示例 -->
+  <section class="slide">
+    <h2>2.5 编写 HTML 文件示例</h2>
+    <pre>&lt;!-- 程序 2-5 --&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;页面的标题&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p&gt;这是我的第一个页面。 &lt;b&gt;这是粗体文本。&lt;/b&gt;&lt;/p&gt;
+  &lt;img src=".img/welcome.jpg"&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <p>养成良好的编码习惯，注意结构和缩进。</p>
+  </section>
+
+  <!-- 本章总结 -->
+  <section class="slide">
+    <h2>第2章 总结</h2>
+    <ul>
+      <li>HTML 文件基本结构：<code>&lt;html&gt;</code>、<code>&lt;head&gt;</code>、<code>&lt;body&gt;</code>。</li>
+      <li><code>&lt;body&gt;&lt;/body&gt;</code> 是核心部分，浏览器中看到的信息都定义在此。</li>
+      <li>标记分单标记和双标记，属性写在首标记内。</li>
+      <li>DOCTYPE 声明文档类型，避免怪异模式。</li>
+      <li>注意文件命名和编码规范。</li>
+    </ul>
+  </section>
+
+  <!-- ========== 第3章 章节页 ========== -->
+  <section class="slide section">
+    <h2>第3章 文字与段落</h2>
+  </section>
+
+  <!-- 3.1 添加文字 -->
+  <section class="slide">
+    <h2>3.1.1 添加文字</h2>
+    <ul>
+      <li>文字是网页的基础，添加在 <code>&lt;body&gt;</code> 与 <code>&lt;/body&gt;</code> 之间。</li>
+      <li>包括普通文字、空格符、特殊符号以及注释语句。</li>
+    </ul>
+    <pre>&lt;!-- 程序 3-1 --&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;在网页中添加文字&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  这是一本介绍 HTML、CSS、JAVASCRIPT 的专业书籍。
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+  </section>
+
+  <!-- 标题字 -->
+  <section class="slide">
+    <h2>3.1.2 标题字</h2>
+    <ul>
+      <li>HTML 定义六级标题，从 <code>&lt;h1&gt;</code> 到 <code>&lt;h6&gt;</code>，字号依次递减。</li>
+      <li>可设置对齐方式：left、center、right。</li>
+    </ul>
+    <pre>&lt;h1 align="center"&gt;一级标题&lt;/h1&gt;
+&lt;h2&gt;二级标题&lt;/h2&gt;
+&lt;h3&gt;三级标题&lt;/h3&gt;
+&lt;h4 align=left&gt;四级标题&lt;/h4&gt;
+&lt;h5 align=center&gt;五级标题&lt;/h5&gt;
+&lt;h6 align=right&gt;六级标题&lt;/h6&gt;</pre>
+  </section>
+
+  <!-- 空格与特殊符号 -->
+  <section class="slide">
+    <h2>3.1.3 添加空格 & 3.1.4 特殊符号</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="color:#4338ca;">空格</h3>
+        <ul>
+          <li>HTML 自动删除多余空格，只保留一个。</li>
+          <li>用 <code>&amp;nbsp;</code> 表示空格。</li>
+        </ul>
+        <pre>这是一本 &amp;nbsp;&amp;nbsp; 介绍 HTML 的专业书籍。</pre>
+      </div>
+      <div>
+        <h3 style="color:#4338ca;">特殊符号</h3>
+        <ul>
+          <li><code>&amp;amp;</code> → &amp;</li>
+          <li><code>&amp;copy;</code> → ©</li>
+          <li><code>&amp;lt;</code> → &lt;</li>
+          <li><code>&amp;gt;</code> → &gt;</li>
+        </ul>
+        <pre>版权所有 &amp;copy;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 注释语句 -->
+  <section class="slide">
+    <h2>3.1.5 注释语句</h2>
+    <ul>
+      <li>增加代码可读性，浏览器中不可见。</li>
+      <li>基本语法：<code>&lt;!-- 注释内容 --&gt;</code></li>
+    </ul>
+    <pre>&lt;!-- 程序 3-5 --&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;在网页中添加注释&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;center&gt;
+    &lt;pre&gt;&lt;!--pre 代表原样显示排版格式 --&gt;
+我们永远的家
+—— 多媒体专业!
+    &lt;/pre&gt;
+  &lt;/center&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+  </section>
+
+  <!-- 3.2 文字样式 -->
+  <section class="slide">
+    <h2>3.2 文字样式</h2>
+    <ul>
+      <li>使用 <code>&lt;font&gt;</code> 设置字体、字号、颜色。</li>
+      <li>基本语法：<code>&lt;font face=" " size=" " color=" "&gt;...&lt;/font&gt;</code></li>
+    </ul>
+    <pre>&lt;!-- 程序 3-6 --&gt;
+&lt;center&gt;
+  &lt;font face="黑体" size=6 color="red"&gt;
+    我们是一个团体, 不会丢下谁, 不会落下谁。共同奋进!
+  &lt;/font&gt;
+&lt;/center&gt;</pre>
+  </section>
+
+  <!-- 粗体 斜体 下划线 -->
+  <section class="slide">
+    <h2>3.3.1 粗体、斜体、下划线</h2>
+    <div class="two-col">
+      <div>
+        <pre>&lt;b&gt;粗体&lt;/b&gt;
+&lt;i&gt;斜体&lt;/i&gt;
+&lt;u&gt;下划线&lt;/u&gt;</pre>
+      </div>
+      <div>
+        <pre>&lt;center&gt;
+  &lt;font color="#FF0000" size=3&gt;
+    &lt;b&gt;这些文字是粗体的&lt;/b&gt;
+  &lt;/font&gt;&lt;br&gt;
+  &lt;i&gt;这些文字是斜体的&lt;/i&gt;&lt;br&gt;
+  &lt;u&gt;这些文字带有下划线&lt;/u&gt;
+&lt;/center&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 删除线 上下标 -->
+  <section class="slide">
+    <h2>3.3.2 删除线 & 3.3.3 上标/下标</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="color:#4338ca;">删除线</h3>
+        <pre>&lt;del&gt;删除线文字&lt;/del&gt;</pre>
+        <pre>作者信箱由&lt;del&gt;junmeihao@gmail.com&lt;/del&gt;
+更改为 hongmei@gmail.com</pre>
+      </div>
+      <div>
+        <h3 style="color:#4338ca;">上标 / 下标</h3>
+        <pre>&lt;sup&gt;上标&lt;/sup&gt;
+&lt;sub&gt;下标&lt;/sub&gt;</pre>
+        <pre>x&lt;sup&gt;2&lt;/sup&gt; - 3x + 2 = 0
+解: x&lt;sub&gt;1&lt;/sub&gt; = 2; x&lt;sub&gt;2&lt;/sub&gt; = 1</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 文字标注 地址 等宽 -->
+  <section class="slide">
+    <h2>3.3.4 文字标注 & 3.3.5 地址 & 3.3.6 等宽</h2>
+    <div class="grid3">
+      <div class="card">
+        <h3>文字标注</h3>
+        <pre>&lt;ruby&gt;第二十九届奥运会&lt;rt&gt;2008&lt;/rt&gt;&lt;/ruby&gt;</pre>
+      </div>
+      <div class="card">
+        <h3>地址文字</h3>
+        <pre>&lt;address&gt;wangtao@gmail.com&lt;/address&gt;</pre>
+      </div>
+      <div class="card">
+        <h3>等宽文字</h3>
+        <pre>&lt;tt&gt;等宽文字&lt;/tt&gt;
+&lt;samp&gt;等宽&lt;/samp&gt;
+&lt;code&gt;代码&lt;/code&gt;
+&lt;kbd&gt;键盘&lt;/kbd&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3.4 段落 -->
+  <section class="slide">
+    <h2>3.4.1 段落标记</h2>
+    <ul>
+      <li>用 <code>&lt;p&gt;</code> 标记开始一个段落，不同段落间有间距。</li>
+      <li>基本语法：<code>&lt;p&gt;...&lt;/p&gt;</code></li>
+    </ul>
+    <pre>&lt;p&gt;五十个不同的分子, 在不同状态下进入了同一容器...&lt;/p&gt;
+&lt;p&gt;在不地碰撞和摩擦中, 分子也不断地变化...&lt;/p&gt;</pre>
+  </section>
+
+  <!-- 换行 居中 -->
+  <section class="slide">
+    <h2>3.4.2 换行 & 3.4.3 居中</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="color:#4338ca;">换行</h3>
+        <pre>&lt;br&gt; 强制换行
+&lt;nobr&gt;...&lt;/nobr&gt; 不换行
+&lt;wbr&gt; 强制换行点</pre>
+      </div>
+      <div>
+        <h3 style="color:#4338ca;">居中</h3>
+        <pre>&lt;center&gt;内容居中&lt;/center&gt;</pre>
+        <pre>&lt;center&gt;《关于我们》&lt;/center&gt;
+&lt;center&gt;五十个不同的分子...&lt;/center&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 水平线 预格式化 -->
+  <section class="slide">
+    <h2>3.4.4 水平分隔线 & 3.4.5 预格式化</h2>
+    <div class="two-col">
+      <div>
+        <h3 style="color:#4338ca;">水平线</h3>
+        <pre>&lt;hr width=" " size=" " color=" " align=" "&gt;</pre>
+        <pre>&lt;hr&gt;
+&lt;hr size="6"&gt;
+&lt;hr width="40%"&gt;
+&lt;hr size="6" width="30%" align="center" noshade color="red"&gt;</pre>
+      </div>
+      <div>
+        <h3 style="color:#4338ca;">预格式化</h3>
+        <pre>&lt;pre&gt;...&lt;/pre&gt;</pre>
+        <pre>&lt;pre&gt;
+请记住我们是一个团体,
+
+不会丢下谁,
+
+不会落下谁。
+
+共同奋进! !
+&lt;/pre&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 段落缩进 -->
+  <section class="slide">
+    <h2>3.4.6 设置段落缩进</h2>
+    <ul>
+      <li>使用 <code>&lt;blockquote&gt;</code> 实现段落缩进，增加层次效果。</li>
+    </ul>
+    <pre>&lt;blockquote&gt;
+  &lt;p&gt;五十个不同的分子, 在不同状态下进入了同一容器,&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;&lt;blockquote&gt;
+  &lt;p&gt;这就组成了我们的家——083007 班。&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/blockquote&gt;</pre>
+  </section>
+
+  <!-- 小实例 唐诗欣赏 -->
+  <section class="slide">
+    <h2>3.5 小实例 · 唐诗欣赏</h2>
+    <pre>&lt;h2 align="center"&gt;唐诗欣赏&lt;/h2&gt;
+&lt;hr width="100%" size="1" color="#00ffee"&gt;
+&lt;p align="center"&gt;&lt;b&gt;&lt;font size="3"&gt;静夜思&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;
+&lt;p align="center"&gt;&lt;font size="2"&gt;李白&lt;/font&gt;&lt;/p&gt;
+&lt;p align="center"&gt;&lt;b&gt;床前明月光，&lt;br&gt;
+疑是地上霜。&lt;br&gt;
+举头望明月，&lt;br&gt;
+低头思故乡。&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;hr width="100%" size="1" color="#00ffee"&gt;
+&lt;p&gt;&lt;font class="text"&gt;&lt;b&gt;【简析】&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;这是写远客思乡之情的诗...&lt;/p&gt;
+&lt;hr width="400" size="3" color="#00ee99" align="left"&gt;
+版权 &amp;copy; 版权所有，违者必究
+&lt;address&gt;E-mail:limingwei@gmail.com&lt;/address&gt;</pre>
+  </section>
+
+  <!-- 本章总结 -->
+  <section class="slide">
+    <h2>第3章 总结</h2>
+    <ul>
+      <li>文字内容标记：普通文字、空格、特殊符号、注释、标题字。</li>
+      <li>文字样式标记：字体、字号、颜色、粗体、斜体、下划线、删除线、上下标、等宽、地址。</li>
+      <li>段落格式标记：段落、换行、居中、水平线、预格式化、缩进。</li>
+      <li>文字设计注意事项：与整体页面协调、结构清晰、颜色字体统一。</li>
+    </ul>
+  </section>
+
+  <!-- 结束页 -->
+  <section class="slide cover">
+    <h1>谢谢！</h1>
+    <p style="font-size:1.2rem;margin-top:1.2rem;opacity:0.85;">网页设计与开发 · 第1-3章合并</p>
+  </section>
+
+</div>
+
+<div class="footer-bar">
+  <div>
+    <span id="pageInfo">1 / 1</span>
+  </div>
+  <div class="nav-btns">
+    <button id="prevBtn" onclick="prevSlide()">上一页</button>
+    <button id="nextBtn" onclick="nextSlide()">下一页</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  function showSlide(index) {
+    slides.forEach((s, i) => s.classList.toggle('active', i === index));
+    document.getElementById('pageInfo').textContent = (index + 1) + ' / ' + slides.length;
+    document.getElementById('progress').style.width = ((index + 1) / slides.length * 100) + '%';
+    document.getElementById('prevBtn').disabled = index === 0;
+    document.getElementById('nextBtn').disabled = index === slides.length - 1;
+    document.querySelector('.slide.active').scrollTop = 0;
+  }
+
+  function nextSlide() {
+    if (current < slides.length - 1) { current++; showSlide(current); }
+  }
+
+  function prevSlide() {
+    if (current > 0) { current--; showSlide(current); }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') nextSlide();
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
+    if (e.key === 'Home') { current = 0; showSlide(current); }
+    if (e.key === 'End') { current = slides.length - 1; showSlide(current); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (diff < -50) nextSlide();
+    if (diff > 50) prevSlide();
+  });
+
+  showSlide(current);
+</script>
+
+</body>
+</html>
