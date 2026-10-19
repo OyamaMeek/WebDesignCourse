@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网页设计与开发 · 第4章 列表</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      overflow: hidden;
+      color: #1e293b;
+    }
+    #deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      padding: 4vh 5vw 6vh;
+      background: linear-gradient(135deg, #f8fafc 0%, #e8eef7 100%);
+      animation: fadeIn 0.35s ease;
+      overflow-y: auto;
+    }
+    .slide.active { display: flex; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .slide.cover {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      color: #fff;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+    }
+    .slide.cover h1 { font-size: 3.9rem; margin-bottom: 1.1rem; letter-spacing: 3px; }
+    .slide.cover p { font-size: 1.55rem; opacity: 0.92; }
+    .slide.section {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .slide.section h2 { font-size: 2.9rem; letter-spacing: 4px; }
+    .slide h2 {
+      font-size: 2.05rem;
+      color: #0f172a;
+      margin-bottom: 1.1rem;
+      border-left: 8px solid #6366f1;
+      padding-left: 16px;
+      flex-shrink: 0;
+    }
+    .slide.section h2 { border: none; color: #fff; padding: 0; }
+    .slide ul { list-style: none; }
+    .slide ul li {
+      font-size: 1.22rem;
+      line-height: 1.75;
+      padding-left: 26px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+    .slide ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #6366f1;
+      font-weight: bold;
+    }
+    .slide p { font-size: 1.22rem; line-height: 1.75; margin: 5px 0; }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 15px 19px;
+      border-radius: 10px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 1rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      margin: 7px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    code {
+      background: #e0e7ff;
+      color: #4338ca;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 1.05em;
+    }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px 19px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+    .card h3 { color: #4338ca; margin-bottom: 7px; font-size: 1.2rem; }
+    .card p, .card li { font-size: 1.08rem; line-height: 1.65; }
+    .card ul li { font-size: 1.08rem; margin-bottom: 3px; }
+    .badge {
+      display: inline-block;
+      background: #f59e0b;
+      color: #fff;
+      font-size: 0.85rem;
+      padding: 3px 11px;
+      border-radius: 20px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .footer-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 44px;
+      background: rgba(15, 23, 42, 0.88);
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 0.98rem;
+      z-index: 100;
+      backdrop-filter: blur(6px);
+    }
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #0ea5e9, #6366f1);
+      width: 0%;
+      z-index: 200;
+      transition: width 0.3s ease;
+    }
+    .nav-btns button {
+      background: #6366f1;
+      border: none;
+      color: #fff;
+      padding: 6px 17px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 9px;
+      font-size: 0.98rem;
+      transition: 0.2s;
+    }
+    .nav-btns button:hover { background: #4f46e5; }
+    .nav-btns button:disabled { background: #475569; cursor: not-allowed; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+    
+    /* 综合案例专用样式 */
+    .chrysanthemum-demo {
+      background: #fffaf0;
+      border: 1px solid #f6e3b4;
+      border-radius: 12px;
+      padding: 20px 25px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+    .chrysanthemum-demo h3 {
+      color: #b45309;
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+    .chrysanthemum-demo .sub-title {
+      font-size: 1.15rem;
+      color: #92400e;
+      font-weight: bold;
+      margin: 10px 0 6px;
+      border-bottom: 1px dashed #fcd34d;
+      padding-bottom: 4px;
+    }
+    .chrysanthemum-demo ul, .chrysanthemum-demo ol, .chrysanthemum-demo dl {
+      padding-left: 22px;
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+    .chrysanthemum-demo ul { list-style-type: disc; color: #78350f; }
+    .chrysanthemum-demo ol { list-style-type: decimal; color: #78350f; }
+    .chrysanthemum-demo dt {
+      font-weight: bold;
+      color: #b45309;
+      margin-top: 8px;
+    }
+    .chrysanthemum-demo dd {
+      margin-left: 20px;
+      color: #57534e;
+      font-size: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .slide { padding: 4vh 5vw 7vh; }
+      .slide h2 { font-size: 1.5rem; }
+      .slide ul li, .slide p { font-size: 1.05rem; }
+      .slide.cover h1 { font-size: 2.2rem; }
+      .grid2, .grid3, .two-col { grid-template-columns: 1fr; }
+      pre { font-size: 0.88rem; padding: 11px 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div id="deck">
+
+  <!-- ========== 封面 ========== -->
+  <section class="slide cover active">
+    <h1>网页设计与开发</h1>
+    <p>第4章 · 列表</p>
+    <p style="font-size:1.1rem;margin-top:1.5rem;opacity:0.8;">无序列表 / 有序列表 / 定义列表 / 嵌套列表 / 菜单与目录</p>
+  </section>
+
+  <!-- ========== 第4章 章节页 ========== -->
+  <section class="slide section">
+    <h2>第4章 列表</h2>
+  </section>
+
+  <!-- 4.1 列表简介 -->
+  <section class="slide">
+    <h2>4.1 列表简介</h2>
+    <ul>
+      <li>在制作网页时，列表经常被用到写提纲和品种说明书。</li>
+      <li>通过列表标记的使用能使这些内容在网页中条理清晰、层次分明、格式美观地表现出来。</li>
+      <li>顾名思义就是在网页中将相关资料以条目的形式有序或者无序排列而形成的表。</li>
+      <li>常用的列表有无序列表、有序列表和定义列表三种。另外，还有不太常用的目录列表和菜单列表。</li>
+    </ul>
+  </section>
+
+  <!-- 常见列表示例 -->
+  <section class="slide">
+    <h2>常见列表示例</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>📰 新闻列表（无序）</h3>
+        <ul>
+          <li>湖人宣布将退役奥尼尔球衣</li>
+          <li>奥尼尔十大时刻：扣碎篮板太暴力</li>
+          <li>奥尼尔：受伤那刻像中枪 19年了！我会想念这一切</li>
+          <li>再美的剧情也要结束 别了奥胖！别了！你的青春</li>
+          <li>火箭正式宣布签约麦克海尔！</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🛒 商品分类（有序/菜单）</h3>
+        <ul>
+          <li>图书音像</li>
+          <li>影视、音乐</li>
+          <li>手机数码、家电</li>
+          <li>电脑、游戏、软件、办公</li>
+          <li>家居、厨具、食品</li>
+          <li>美容化妆、个护健康</li>
+          <li>运动、户外和休闲</li>
+          <li>鞋靴、服饰箱包</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 列表类型表 -->
+  <section class="slide">
+    <h2>列表类型及其标记符号</h2>
+    <div class="card" style="text-align:center;padding:25px 19px;">
+      <table style="width:100%;border-collapse:collapse;font-size:1.12rem;">
+        <thead>
+          <tr style="background:#e0e7ff;">
+            <th style="padding:12px;border:1px solid #cbd5e1;border-radius:8px 0 0 0;">列表类型</th>
+            <th style="padding:12px;border:1px solid #cbd5e1;border-radius:0 8px 0 0;">标记符号</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:10px;border:1px solid #cbd5e1;">无序列表</td><td style="padding:10px;border:1px solid #cbd5e1;"><code>&lt;ul&gt;</code></td></tr>
+          <tr><td style="padding:10px;border:1px solid #cbd5e1;">有序列表</td><td style="padding:10px;border:1px solid #cbd5e1;"><code>&lt;ol&gt;</code></td></tr>
+          <tr><td style="padding:10px;border:1px solid #cbd5e1;">定义列表</td><td style="padding:10px;border:1px solid #cbd5e1;"><code>&lt;dl&gt;</code></td></tr>
+          <tr><td style="padding:10px;border:1px solid #cbd5e1;">目录列表</td><td style="padding:10px;border:1px solid #cbd5e1;"><code>&lt;dir&gt;</code></td></tr>
+          <tr><td style="padding:10px;border:1px solid #cbd5e1;">菜单列表</td><td style="padding:10px;border:1px solid #cbd5e1;"><code>&lt;menu&gt;</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4.2 无序列表 -->
+  <section class="slide">
+    <h2>4.2 无序列表 (Unordered List)</h2>
+    <ul>
+      <li>是一个没有特定顺序的相关条目的集合。</li>
+      <li>各个列表项之间属并列关系，没有先后顺序之分，它们之间以一个项目符号来标记。</li>
+    </ul>
+    <pre>&lt;ul type=""&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+&lt;/ul&gt;</pre>
+    <div class="grid3" style="margin-top:6px;">
+      <div class="card" style="padding:12px 15px;">
+        <p><strong>type 取值</strong></p>
+        <ul>
+          <li><code>disc</code>：实心圆点（默认）</li>
+          <li><code>circle</code>：空心圆点</li>
+          <li><code>square</code>：实心方块</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 无序列表示例 -->
+  <section class="slide">
+    <h2>无序列表 · 示例代码 4-1</h2>
+    <pre>&lt;!-- 程序 4-1 --&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;无序列表&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;b&gt;班级新闻&lt;/b&gt;
+  &lt;ul type="disc"&gt;
+    &lt;li&gt;最新课程表&lt;/li&gt;
+    &lt;li&gt;关于普通话考试的通知&lt;/li&gt;
+    &lt;li&gt;钢琴名曲音乐欣赏 -- 献给爱丽丝&lt;/li&gt;
+    &lt;li&gt;中国奥运屈辱史&lt;/li&gt;
+    &lt;li&gt;div+css 高级应用学习&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <p style="margin-top:8px;"><strong>执行效果：</strong>每个列表项前出现实心圆点，内容依次排列。</p>
+  </section>
+
+  <!-- 4.3 有序列表 -->
+  <section class="slide">
+    <h2>4.3 有序列表 (Ordered List)</h2>
+    <ul>
+      <li>是一个有特定顺序的相关条目的集合。</li>
+      <li>各个列表项有先后顺序之分，它们之间以编号来标记。</li>
+    </ul>
+    <pre>&lt;ol type=""&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+&lt;/ol&gt;</pre>
+    <div class="grid2" style="margin-top:6px;">
+      <div class="card" style="padding:12px 15px;">
+        <p><strong>type 取值</strong></p>
+        <ul>
+          <li><code>"1"</code>：阿拉伯数字（默认）</li>
+          <li><code>"a"</code>：小写英文字母</li>
+          <li><code>"A"</code>：大写英文字母</li>
+        </ul>
+      </div>
+      <div class="card" style="padding:12px 15px;">
+        <p><strong>其他取值</strong></p>
+        <ul>
+          <li><code>"i"</code>：小写罗马数字</li>
+          <li><code>"I"</code>：大写罗马数字</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 有序列表 示例代码4-2 -->
+  <section class="slide">
+    <h2>有序列表 · 示例代码 4-2</h2>
+    <pre>&lt;!-- 程序 4-2 --&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;有序列表&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;strong&gt;报名&lt;/strong&gt;
+  &lt;ol type="A"&gt;
+    &lt;li&gt;报名时间：3月16—21日，逾期不予受理。&lt;/li&gt;
+    &lt;li&gt;报名地点：所在院系办公室。&lt;/li&gt;
+    &lt;li&gt;报名费用：按物价局规定 85 元/人/次（含培训费用），报名时交齐。&lt;/li&gt;
+    &lt;li&gt;提交资料及注意事项：&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+    <p style="margin-top:8px;"><strong>执行效果：</strong>列表项前依次显示 A、B、C、D。</p>
+  </section>
+
+  <!-- 编号起始值 -->
+  <section class="slide">
+    <h2>4.3.2 编号起始值</h2>
+    <ul>
+      <li>使用有序列表标记的 <code>start</code> 属性，可以改变编号的起始值。</li>
+      <li><code>start</code> 属性值是一个整数，表示从哪一个数字或字母开始编号。</li>
+      <li>例如，设置 <code>start="3"</code>，则编号将从“3”、“c”、“C”、“iii”或“III”开始。</li>
+    </ul>
+    <pre>&lt;ol type="A" start="3"&gt;
+  &lt;li&gt;报名时间：3月16—21日，逾期不予受理。&lt;/li&gt;
+  &lt;li&gt;报名地点：所在院系办公室。&lt;/li&gt;
+  &lt;li&gt;报名费用：按物价局规定 85 元/人/次（含培训费用），报名时交齐。&lt;/li&gt;
+  &lt;li&gt;提交资料及注意事项：&lt;/li&gt;
+&lt;/ol&gt;</pre>
+    <p style="margin-top:8px;"><strong>注意：</strong>尽管 <code>type="A"</code>，<code>start</code> 的值仍需取阿拉伯数字“3”，而不能取大写字母“C”。</p>
+  </section>
+
+  <!-- 列表项样式 -->
+  <section class="slide">
+    <h2>4.3.3 列表项样式</h2>
+    <ul>
+      <li>使用列表项标记 <code>&lt;li&gt;</code> 的 <code>type</code> 属性，可以指定单个列表项的符号或编号。</li>
+      <li>当 <code>&lt;ol&gt;</code> 的 <code>type</code> 属性与 <code>&lt;li&gt;</code> 的 <code>type</code> 属性冲突时，单个列表项遵循 <code>&lt;li&gt;</code> 的 <code>type</code> 属性。</li>
+    </ul>
+    <pre>&lt;ol type="A"&gt;
+  &lt;li&gt;报名时间：3月16—21日，逾期不予受理。&lt;/li&gt;
+  &lt;li type="1"&gt;报名地点：所在院系办公室。&lt;/li&gt;
+  &lt;li&gt;报名费用：按物价局规定 85 元/人/次（含培训费用），报名时交齐。&lt;/li&gt;
+  &lt;li&gt;提交资料及注意事项：&lt;/li&gt;
+&lt;/ol&gt;</pre>
+    <p style="margin-top:8px;"><strong>效果：</strong>第二个列表项样式变为阿拉伯数字“2”，后续列表项恢复遵循 <code>&lt;ol&gt;</code> 的 <code>type</code> 属性。</p>
+  </section>
+
+  <!-- 列表项编号 -->
+  <section class="slide">
+    <h2>4.3.4 列表项编号</h2>
+    <ul>
+      <li>使用列表项标记 <code>&lt;li&gt;</code> 的 <code>value</code> 属性，可以改变当前列表项的编号大小，并影响其后所有列表项的编号大小。</li>
+      <li>该属性只适用于有序列表。</li>
+    </ul>
+    <pre>&lt;ol type="A"&gt;
+  &lt;li&gt;报名时间：3月16—21日，逾期不予受理。&lt;/li&gt;
+  &lt;li value="5"&gt;报名地点：所在院系办公室。&lt;/li&gt;
+  &lt;li&gt;报名费用：按物价局规定 85 元/人/次（含培训费用），报名时交齐。&lt;/li&gt;
+  &lt;li&gt;提交资料及注意事项：&lt;/li&gt;
+&lt;/ol&gt;</pre>
+    <p style="margin-top:8px;"><strong>效果：</strong>第二个列表项及其后所有列表项从字母“E”开始编号。</p>
+  </section>
+
+  <!-- 4.4 嵌套列表 -->
+  <section class="slide">
+    <h2>4.4 嵌套列表</h2>
+    <ul>
+      <li>列表还可以嵌套使用，也就是一个列表中还可以包含有多层子列表。</li>
+      <li>对于内容层次较多的情况，使用嵌套列表不仅使网页的内容布局更加合理美观，而且使其内容看起来更加清晰、明了。</li>
+      <li>嵌套的列表可以是无序列表的嵌套，也可以是有序列表的嵌套，还可以是无序列表和有序列表的混合嵌套。</li>
+    </ul>
+    <pre>&lt;ol type="1"&gt;
+  &lt;li&gt;&lt;strong&gt;报名&lt;/strong&gt;&lt;/li&gt;
+  &lt;ol type="A"&gt;
+    &lt;li&gt;报名时间：3月16—21日，逾期不予受理。&lt;/li&gt;
+    &lt;li&gt;报名地点：所在院系办公室。&lt;/li&gt;
+    &lt;li&gt;报名费用：按物价局规定 85 元/人/次。&lt;/li&gt;
+    &lt;li&gt;提交资料及注意事项：&lt;/li&gt;
+    &lt;ol type="a"&gt;
+      &lt;li&gt;填写《河南省普通话水平测试报名表》一份。&lt;/li&gt;
+      &lt;li&gt;填写准考证一份。&lt;/li&gt;
+      &lt;li&gt;提交小一寸彩色证件照3张。&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/ol&gt;
+  &lt;li&gt;&lt;strong&gt;培训&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;测试&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;</pre>
+  </section>
+
+  <!-- 嵌套列表效果图 -->
+  <section class="slide">
+    <h2>嵌套列表 · 执行效果</h2>
+    <div class="card" style="padding:20px;">
+      <p style="font-weight:bold;font-size:1.3rem;margin-bottom:10px;">普通话考试通知</p>
+      <ol style="font-size:1.1rem;line-height:1.8;padding-left:20px;">
+        <li><strong>报名</strong>
+          <ol type="A" style="padding-left:22px;">
+            <li>报名时间：3月16—21日，逾期不予受理。</li>
+            <li>报名地点：所在院系办公室。</li>
+            <li>报名费用：按物价局规定 85 元/人/次（含培训费用），报名时交齐。</li>
+            <li>提交资料及注意事项：
+              <ol type="a" style="padding-left:22px;">
+                <li>参加测试的学生须填写《河南省普通话水平测试报名表》一份（准考证号码不用填写）；</li>
+                <li>填写准考证一份（编号不用填写），所填姓名和出生年月等须与身份证一致；</li>
+                <li>提交小一寸彩色证件照3张（照片不能是打印版、不能是生活照，3张照片必须统一底片）。</li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+        <li><strong>培训</strong></li>
+        <li><strong>测试</strong></li>
+      </ol>
+      <p style="margin-top:10px;color:#64748b;font-size:0.95rem;">（注：具体时间和地点按河南财经学院测试站发回的准考证上所列。）</p>
+    </div>
+  </section>
+
+  <!-- 4.5 定义列表 -->
+  <section class="slide">
+    <h2>4.5 定义列表 (Definition List)</h2>
+    <ul>
+      <li>插入 <code>&lt;dl&gt;</code> 标记，即可自动生成定义列表。</li>
+      <li>每一项前既没有项目符号，也没有编号，它是通过缩进的形式使内容层次清晰。</li>
+    </ul>
+    <pre>&lt;dl&gt;
+  &lt;dt&gt;...&lt;/dt&gt;
+  &lt;dd&gt;...&lt;/dd&gt;
+  &lt;dd&gt;...&lt;/dd&gt;
+  &lt;dt&gt;...&lt;/dt&gt;
+  &lt;dd&gt;...&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+    <div class="grid2" style="margin-top:6px;">
+      <div class="card" style="padding:12px 15px;">
+        <p><strong><code>&lt;dt&gt;</code> 标记</strong></p>
+        <p>创建列表中的每个元素标题，内容左对齐。</p>
+      </div>
+      <div class="card" style="padding:12px 15px;">
+        <p><strong><code>&lt;dd&gt;</code> 标记</strong></p>
+        <p>创建列表元素的内容描述，内容相对于 <code>&lt;dt&gt;</code> 向右缩进。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 定义列表示例 -->
+  <section class="slide">
+    <h2>定义列表 · 示例代码 4-7</h2>
+    <pre>&lt;dl&gt;
+  &lt;dt&gt;报名&lt;/dt&gt;
+  &lt;dd&gt;报名时间：3月16—21日，逾期不予受理。&lt;/dd&gt;
+  &lt;dd&gt;报名地点：所在院系办公室。&lt;/dd&gt;
+  &lt;dd&gt;报名费用：按物价局规定85元/人/次（含培训费用），报名时交齐。&lt;/dd&gt;
+  &lt;dd&gt;提交资料及注意事项：&lt;/dd&gt;
+  &lt;dt&gt;培训&lt;/dt&gt;
+  &lt;dd&gt;培训时间：3月31日（星期六）。&lt;/dd&gt;
+  &lt;dd&gt;培训地点：河南财经学院4号楼503教室（如有变动，以通知为准）。&lt;/dd&gt;
+  &lt;dd&gt;注意事项：报考同学请自带《普通话水平测试指导》用书（新版）。&lt;/dd&gt;
+&lt;/dl&gt;</pre>
+    <p style="margin-top:8px;"><strong>执行效果：</strong>“报名”和“培训”左对齐，其下的描述内容向右缩进，层次清晰。</p>
+  </section>
+
+  <!-- 4.6 菜单列表和目录列表 -->
+  <section class="slide">
+    <h2>4.6 菜单列表和目录列表</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>菜单列表 <code>&lt;menu&gt;</code></h3>
+        <ul>
+          <li>通常用于显示一个简单的单列表。</li>
+          <li>一般不做嵌套。</li>
+          <li>使用和无序列表类似。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>目录列表 <code>&lt;dir&gt;</code></h3>
+        <ul>
+          <li>通常用于显示一个多列的文件列表。</li>
+          <li>可做嵌套。</li>
+          <li>使用和无序列表类似。</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:14px;font-weight:bold;color:#b91c1c;">⚠ 注意：这两种列表均不推荐在现代网页中使用，可视为无序列表的特殊形式。</p>
+    <pre>&lt;menu type="disc"&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+&lt;/menu&gt;
+
+&lt;dir&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+  &lt;li&gt;项目名称&lt;/li&gt;
+&lt;/dir&gt;</pre>
+  </section>
+
+  <!-- 小实例：导航条制作 -->
+  <section class="slide">
+    <h2>小实例 · 导航条的制作</h2>
+    <p>利用无序列表和 CSS，制作一个简洁的导航条。</p>
+    <div class="two-col">
+      <div>
+        <h3 style="color:#4338ca;margin-bottom:6px;">HTML 结构</h3>
+        <pre>&lt;div class="container"&gt;
+  &lt;ul id="nav"&gt;
+    &lt;li class="home"&gt;班级首页&lt;/li&gt;
+    &lt;li class="activity"&gt;班级日志&lt;/li&gt;
+    &lt;li class="personel"&gt;个人风采&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</pre>
+      </div>
+      <div>
+        <h3 style="color:#4338ca;margin-bottom:6px;">CSS 样式</h3>
+        <pre>#nav {
+  list-style: none;
+  font-size: 22px;
+  line-height: 40px;
+}
+#nav li { margin-top: 5px; }
+.home {
+  border-top: 4px solid #7BC110;
+  background: #be6;
+}
+.activity {
+  border-top: 4px solid #ff9900;
+  background: #fc3;
+}
+.personel {
+  border-top: 4px solid #ff66ff;
+  background: #fcf;
+}</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- 基于DL标记简单表格 -->
+  <section class="slide">
+    <h2>拓展 · 基于 DL 标记的简单表格</h2>
+    <p>利用 DL 标记实现一个简单的两列表格布局。</p>
+    <pre>&lt;style type="text/css"&gt;
+  dl dt {
+    background: #5f9be3;
+    color: #fff;
+    float: left;
+    font-weight: bold;
+    width: 150px;
+    border: 1px solid #131210;
+    padding: 10px 5px;
+  }
+  dl dd {
+    padding: 10px 5px;
+    border: 1px solid #131210;
+  }
+&lt;/style&gt;</pre>
+    <div class="card" style="margin-top:10px;padding:0;overflow:hidden;">
+      <div style="display:flex;border-bottom:1px solid #131210;">
+        <div style="width:150px;background:#5f9be3;color:#fff;font-weight:bold;padding:10px 5px;border-right:1px solid #131210;">属性名</div>
+        <div style="padding:10px 5px;flex:1;">属性说明</div>
+      </div>
+      <div style="display:flex;border-bottom:1px solid #131210;">
+        <div style="width:150px;background:#5f9be3;color:#fff;font-weight:bold;padding:10px 5px;border-right:1px solid #131210;">宽度</div>
+        <div style="padding:10px 5px;flex:1;">设置表格或元素的宽度</div>
+      </div>
+      <div style="display:flex;">
+        <div style="width:150px;background:#5f9be3;color:#fff;font-weight:bold;padding:10px 5px;border-right:1px solid #131210;">对齐</div>
+        <div style="padding:10px 5px;flex:1;">设置内容对齐方式</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 新增：综合案例 · 开封菊展 ========== -->
+  <section class="slide">
+    <h2>综合案例 · 开封菊展品种简介</h2>
+    <p style="margin-bottom:10px;">综合运用无序列表、有序列表和定义列表来展示菊花品种信息。</p>
+    <div class="chrysanthemum-demo">
+      <h3>🌼 开封菊展 · 菊花品种简介</h3>
+      
+      <div class="sub-title">一、热门品种（无序列表）</div>
+      <ul>
+        <li><strong>汴梁紫玉</strong> — 花色紫红，花瓣如玉，开封传统名品。</li>
+        <li><strong>金丝皇菊</strong> — 色泽金黄，花型饱满，适宜茶饮与观赏。</li>
+        <li><strong>绿牡丹</strong> — 花瓣初开时呈绿色，清雅别致，极为名贵。</li>
+        <li><strong>墨荷</strong> — 花色墨紫，形似荷花，气质高冷。</li>
+      </ul>
+
+      <div class="sub-title">二、观赏建议（有序列表）</div>
+      <ol>
+        <li>最佳观赏时间：每年10月中旬至11月上旬。</li>
+        <li>推荐展区：龙亭公园、清明上河园、铁塔公园。</li>
+        <li>拍照小贴士：清晨或傍晚光线柔和，更能拍出花瓣质感。</li>
+        <li>注意事项：请勿触摸花朵，文明观赏。</li>
+      </ol>
+
+      <div class="sub-title">三、品种档案（定义列表）</div>
+      <dl>
+        <dt>汴梁紫玉</dt>
+        <dd>花径约15厘米，花瓣层叠，耐寒性较强，是开封菊展的“明星品种”。</dd>
+        <dt>金丝皇菊</dt>
+        <dd>花径可达20厘米，色泽金黄，既可观赏又可入药泡茶。</dd>
+        <dt>绿牡丹</dt>
+        <dd>初开时为嫩绿色，盛开后渐变为白绿相间，极为罕见。</dd>
+      </dl>
+    </div>
+  </section>
+
+  <!-- 本章总结 -->
+  <section class="slide">
+    <h2>第4章 总结</h2>
+    <ul>
+      <li>本章主要介绍了无序列表、有序列表、列表的嵌套、定义列表、菜单列表和目录列表等的使用。</li>
+      <li>重点掌握无序列表和有序列表的使用。</li>
+      <li>重点掌握列表的嵌套使用，以便设计出层次清晰、页面美观的网页。</li>
+      <li>熟悉定义列表的使用，了解菜单列表和目录列表（不推荐使用）。</li>
+    </ul>
+  </section>
+
+  <!-- 结束页 -->
+  <section class="slide cover">
+    <h1>谢谢！</h1>
+    <p style="font-size:1.2rem;margin-top:1.2rem;opacity:0.85;">网页设计与开发 · 第4章 列表</p>
+  </section>
+
+</div>
+
+<div class="footer-bar">
+  <div>
+    <span id="pageInfo">1 / 1</span>
+  </div>
+  <div class="nav-btns">
+    <button id="prevBtn" onclick="prevSlide()">上一页</button>
+    <button id="nextBtn" onclick="nextSlide()">下一页</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  function showSlide(index) {
+    slides.forEach((s, i) => s.classList.toggle('active', i === index));
+    document.getElementById('pageInfo').textContent = (index + 1) + ' / ' + slides.length;
+    document.getElementById('progress').style.width = ((index + 1) / slides.length * 100) + '%';
+    document.getElementById('prevBtn').disabled = index === 0;
+    document.getElementById('nextBtn').disabled = index === slides.length - 1;
+    document.querySelector('.slide.active').scrollTop = 0;
+  }
+
+  function nextSlide() {
+    if (current < slides.length - 1) { current++; showSlide(current); }
+  }
+
+  function prevSlide() {
+    if (current > 0) { current--; showSlide(current); }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') nextSlide();
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
+    if (e.key === 'Home') { current = 0; showSlide(current); }
+    if (e.key === 'End') { current = slides.length - 1; showSlide(current); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (diff < -50) nextSlide();
+    if (diff > 50) prevSlide();
+  });
+
+  showSlide(current);
+</script>
+
+</body>
+</html>
