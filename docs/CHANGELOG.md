@@ -42,3 +42,21 @@
 - **Git 提交**：`209f6f1 feat: add Mohe detail page and navigation`；已普通推送至 `origin/main`。
 
 ---
+
+## [2026-11-03 21:32] 删除菊展首页顶部教学文字
+
+- **需求/问题描述**：
+  > 删除截图中菊展页面白底黑字部分。
+
+- **实际实现的功能与改动**：
+  - 删除菊展首页顶部“综合案例 · 开封菊展品种简介”及下方教学说明。
+  - 检查删除后的 HTML，现有 4 项测试及 `git diff --check` 通过；未新增截图或进行浏览器验证。
+
+- **涉及文件**：
+  - `assignments/261103/MH/index.html`（删除 2 行）
+  - `memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`
+  - `docs/CHANGELOG.md`
+
+- **Git 提交**：待提交。
+
+---
