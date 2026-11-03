@@ -57,6 +57,6 @@
   - `memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`memory/gotchas.md`
   - `docs/CHANGELOG.md`
 
-- **Git 提交**：待提交。
+- **Git 提交**：`28c4e68 fix: remove lesson text from exhibition homepage`；已普通推送至 `origin/main`。
 
 ---
