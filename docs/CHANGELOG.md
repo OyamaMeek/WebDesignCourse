@@ -39,6 +39,6 @@
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
   - `docs/CHANGELOG.md`
 
-- **Git 提交**：待提交。
+- **Git 提交**：`209f6f1 feat: add Mohe detail page and navigation`；已普通推送至 `origin/main`。
 
 ---
