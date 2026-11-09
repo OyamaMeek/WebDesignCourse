@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网页设计与开发 · 表格与表单</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: "Microsoft YaHei", "PingFang SC", Helvetica, Arial, sans-serif;
+      background: #0f172a;
+      overflow: hidden;
+      color: #1e293b;
+    }
+    #deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      padding: 4vh 5vw 6vh;
+      background: linear-gradient(135deg, #f8fafc 0%, #e8eef7 100%);
+      animation: fadeIn 0.35s ease;
+      overflow-y: auto;
+    }
+    .slide.active { display: flex; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .slide.cover {
+      background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%);
+      color: #fff;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+    }
+    .slide.cover h1 { font-size: 3.4rem; margin-bottom: 1rem; letter-spacing: 3px; }
+    .slide.cover p { font-size: 1.4rem; opacity: 0.92; }
+    .slide.section {
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .slide.section h2 { font-size: 2.8rem; letter-spacing: 4px; border: none; color: #fff; padding: 0; }
+    .slide h2 {
+      font-size: 2rem;
+      color: #0f172a;
+      margin-bottom: 1rem;
+      border-left: 8px solid #6366f1;
+      padding-left: 16px;
+      flex-shrink: 0;
+    }
+    .slide h3 {
+      font-size: 1.3rem;
+      color: #4338ca;
+      margin: 12px 0 6px;
+    }
+    .slide ul { list-style: none; }
+    .slide ul li {
+      font-size: 1.15rem;
+      line-height: 1.75;
+      padding-left: 26px;
+      position: relative;
+      margin-bottom: 3px;
+    }
+    .slide ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: #6366f1;
+      font-weight: bold;
+    }
+    .slide p { font-size: 1.15rem; line-height: 1.75; margin: 5px 0; }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.95rem;
+      line-height: 1.55;
+      overflow-x: auto;
+      margin: 8px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    code {
+      background: #e0e7ff;
+      color: #4338ca;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 1em;
+    }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 18px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+    }
+    .card h3 { color: #4338ca; margin-bottom: 6px; font-size: 1.15rem; }
+    .card p, .card li { font-size: 1.02rem; line-height: 1.65; }
+    .card ul li { font-size: 1.02rem; margin-bottom: 2px; }
+    .footer-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 44px;
+      background: rgba(15, 23, 42, 0.88);
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      font-size: 0.98rem;
+      z-index: 100;
+      backdrop-filter: blur(6px);
+    }
+    .progress {
+      position: fixed;
+      top: 0; left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #0ea5e9, #6366f1);
+      width: 0%;
+      z-index: 200;
+      transition: width 0.3s ease;
+    }
+    .nav-btns button {
+      background: #6366f1;
+      border: none;
+      color: #fff;
+      padding: 6px 17px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-left: 9px;
+      font-size: 0.98rem;
+      transition: 0.2s;
+    }
+    .nav-btns button:hover { background: #4f46e5; }
+    .nav-btns button:disabled { background: #475569; cursor: not-allowed; }
+    .img-container {
+      text-align: center;
+      margin: 8px 0;
+    }
+    .img-container img {
+      max-width: 100%;
+      max-height: 320px;
+      border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+      border: 2px solid #cbd5e1;
+    }
+    .img-caption {
+      font-size: 0.92rem;
+      color: #64748b;
+      margin-top: 6px;
+      text-align: center;
+    }
+    .table-demo {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.95rem;
+      text-align: center;
+      border: 2px solid #6366f1;
+    }
+    .table-demo th {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 6px 8px;
+      border: 1px solid #a5b4fc;
+      font-weight: 600;
+    }
+    .table-demo td {
+      padding: 6px 8px;
+      border: 1px solid #c7d2fe;
+    }
+    .table-demo caption {
+      caption-side: top;
+      font-weight: bold;
+      color: #4338ca;
+      padding-bottom: 4px;
+    }
+    .form-demo {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 20px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+      border: 1px solid #e2e8f0;
+      font-size: 1rem;
+    }
+    .form-demo fieldset {
+      border: 2px solid #c7d2fe;
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin: 8px 0;
+    }
+    .form-demo legend {
+      color: #4338ca;
+      font-weight: bold;
+      padding: 0 8px;
+    }
+    .form-demo label {
+      display: inline-block;
+      margin-right: 6px;
+      color: #334155;
+    }
+    .form-demo input[type="text"],
+    .form-demo input[type="password"] {
+      padding: 4px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      width: 180px;
+    }
+    .form-demo select {
+      padding: 4px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+    .form-demo textarea {
+      width: 100%;
+      padding: 6px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      resize: vertical;
+    }
+    .form-demo input[type="submit"],
+    .form-demo input[type="reset"] {
+      padding: 5px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+    .form-demo input[type="submit"] {
+      background: #6366f1;
+      color: #fff;
+    }
+    .form-demo input[type="submit"]:hover { background: #4f46e5; }
+    .form-demo input[type="reset"] {
+      background: #e2e8f0;
+      color: #334155;
+    }
+    .form-demo input[type="reset"]:hover { background: #cbd5e1; }
+
+    @media (max-width: 768px) {
+      .slide { padding: 4vh 5vw 7vh; }
+      .slide h2 { font-size: 1.5rem; }
+      .slide ul li, .slide p { font-size: 1rem; }
+      .slide.cover h1 { font-size: 2rem; }
+      .grid2, .grid3 { grid-template-columns: 1fr; }
+      pre { font-size: 0.85rem; padding: 10px 12px; }
+      .table-demo { font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div id="deck">
+
+  <!-- ========== 封面 ========== -->
+  <section class="slide cover active">
+    <h1>网页设计与开发</h1>
+    <p>第6章 · 表格 &amp; 第7章 · 表单</p>
+    <p style="font-size:1.1rem;margin-top:1.2rem;opacity:0.8;">清华大学出版社</p>
+    <p style="font-size:1rem;margin-top:0.3rem;opacity:0.7;">http://cs.huel.edu.cn/hcj/</p>
+  </section>
+
+  <!-- ========== 合并目录 ========== -->
+  <section class="slide">
+    <h2>目录 · 表格与表单</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>📊 第6章 表格</h3>
+        <ul>
+          <li>表格基本标记</li>
+          <li>表格标题与表头</li>
+          <li>表格属性设置（边框、宽高、背景、对齐等）</li>
+          <li>行与单元格属性（水平/垂直对齐、跨行/跨列）</li>
+          <li>表格嵌套与布局实例</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📝 第7章 表单</h3>
+        <ul>
+          <li>表单基本概念与 &lt;form&gt; 标记</li>
+          <li>输入控件 &lt;input&gt;（文本、密码、按钮、单选、复选、文件、隐藏等）</li>
+          <li>多行文本域 &lt;textarea&gt;</li>
+          <li>下拉列表框 &lt;select&gt; / &lt;option&gt;</li>
+          <li>按钮、标签与分组 &lt;button&gt; &lt;label&gt; &lt;fieldset&gt;</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 第6章 表格 封面 ========== -->
+  <section class="slide section">
+    <h2>第6章 表格</h2>
+    <p style="margin-top:12px;font-size:1.1rem;opacity:0.85;">表格的标记、属性、嵌套与布局</p>
+  </section>
+
+  <!-- ========== 6.1 表格基本标记 ========== -->
+  <section class="slide">
+    <h2>6.1 表格基本标记</h2>
+    <p>表格由3个基本标签构成：</p>
+    <div class="grid3" style="margin:12px 0;">
+      <div class="card" style="text-align:center;">
+        <h3>&lt;table&gt;</h3>
+        <p>定义表格容器</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <h3>&lt;tr&gt;</h3>
+        <p>定义表格行</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <h3>&lt;td&gt;</h3>
+        <p>定义单元格</p>
+      </div>
+    </div>
+    <pre>&lt;table&gt;
+  &lt;tr&gt;
+    &lt;td&gt;单元格1&lt;/td&gt;
+    &lt;td&gt;单元格2&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</pre>
+    <p style="margin-top:8px;">📌 基本语法中常使用 <code>&lt;th&gt;</code> 定义表头单元格（居中加粗）。</p>
+  </section>
+
+  <!-- ========== 表格实例：课程表 ========== -->
+  <section class="slide">
+    <h2>表格实例 · 课程表</h2>
+    <table class="table-demo">
+      <caption>课程表</caption>
+      <tr>
+        <th>节次 \ 星期</th>
+        <th>星期一</th>
+        <th>星期二</th>
+        <th>星期三</th>
+        <th>星期四</th>
+        <th>星期五</th>
+      </tr>
+      <tr>
+        <td>第12节</td>
+        <td>体育</td>
+        <td>大学英语</td>
+        <td>高等数学</td>
+        <td>数据结构实验</td>
+        <td>Web开发</td>
+      </tr>
+      <tr>
+        <td>第34节</td>
+        <td>大学英语</td>
+        <td>高等数学</td>
+        <td>数据结构</td>
+        <td>数据结构</td>
+        <td>Web开发实验</td>
+      </tr>
+    </table>
+    <p style="margin-top:10px;color:#64748b;font-size:0.95rem;">表格使用 <code>&lt;caption&gt;</code> 定义标题，使用 <code>&lt;th&gt;</code> 定义表头，使用 <code>&lt;td&gt;</code> 定义数据单元格。</p>
+  </section>
+
+  <!-- ========== 表格标题与表头 ========== -->
+  <section class="slide">
+    <h2>表格标题与表头</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>&lt;caption&gt; 表格标题</h3>
+        <p>用于对表格内容进行简单说明，必须紧随 <code>&lt;table&gt;</code> 标记之后。</p>
+        <pre>&lt;table&gt;
+  &lt;caption&gt;课程表&lt;/caption&gt;
+  ...
+&lt;/table&gt;</pre>
+      </div>
+      <div class="card">
+        <h3>&lt;th&gt; 表头单元格</h3>
+        <p>定义表格第一行（或列）的标题，文字默认居中、加粗显示。</p>
+        <pre>&lt;tr&gt;
+  &lt;th&gt;节次&lt;/th&gt;
+  &lt;th&gt;星期一&lt;/th&gt;
+  ...
+&lt;/tr&gt;</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 表格常用属性 ========== -->
+  <section class="slide">
+    <h2>表格常用属性</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>边框与尺寸</h3>
+        <ul>
+          <li><code>border</code>：边框宽度，默认0（无边框）</li>
+          <li><code>bordercolor</code>：边框颜色</li>
+          <li><code>width</code> / <code>height</code>：表格宽度/高度</li>
+          <li><code>cellspacing</code>：单元格间距</li>
+          <li><code>cellpadding</code>：单元格边距（内容与边框距离）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>背景与对齐</h3>
+        <ul>
+          <li><code>bgcolor</code>：背景颜色</li>
+          <li><code>background</code>：背景图像（GIF/JPEG/PNG）</li>
+          <li><code>align</code>：表格水平对齐（left/center/right）</li>
+          <li><code>frame</code>：控制外边框显示（void/above/below/hsides/vsides/lhs/rhs/box/border）</li>
+          <li><code>rules</code>：控制内部边框显示</li>
+        </ul>
+      </div>
+    </div>
+    <pre style="margin-top:10px;">&lt;table width="600" border="1" bordercolor="#00FF00" bgcolor="#f5f5dc" cellspacing="15" cellpadding="10" align="center"&gt;</pre>
+  </section>
+
+  <!-- ========== 行属性 & 单元格合并 ========== -->
+  <section class="slide">
+    <h2>行属性与单元格合并</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>&lt;tr&gt; 行属性</h3>
+        <ul>
+          <li><code>align</code>：行内容水平对齐（left/center/right）</li>
+          <li><code>valign</code>：行内容垂直对齐（top/middle/bottom）</li>
+        </ul>
+        <pre>&lt;tr align="center" valign="top"&gt; ... &lt;/tr&gt;</pre>
+      </div>
+      <div class="card">
+        <h3>单元格合并</h3>
+        <ul>
+          <li><code>rowspan</code>：跨行合并（纵向）</li>
+          <li><code>colspan</code>：跨列合并（横向）</li>
+        </ul>
+        <pre>&lt;td rowspan="2"&gt;合并两行&lt;/td&gt;
+&lt;td colspan="3"&gt;合并三列&lt;/td&gt;</pre>
+      </div>
+    </div>
+    <p style="margin-top:8px;color:#64748b;font-size:0.95rem;">合并后需注意减少对应行/列中单元格的数量，保持表格结构正确。</p>
+  </section>
+
+  <!-- ========== 表格嵌套与布局 ========== -->
+  <section class="slide">
+    <h2>表格嵌套与页面布局</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>表格嵌套</h3>
+        <p>在一个表格的单元格内再插入表格，可实现复杂布局。</p>
+        <pre>&lt;table&gt;
+  &lt;tr&gt;
+    &lt;td&gt;
+      &lt;table&gt;
+        &lt;tr&gt;&lt;td&gt;嵌套表格&lt;/td&gt;&lt;/tr&gt;
+      &lt;/table&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</pre>
+        <p style="margin-top:5px;font-size:0.95rem;color:#b45309;">⚠️ 嵌套层次越多，页面加载速度越慢。</p>
+      </div>
+      <div class="card">
+        <h3>表格布局实例</h3>
+        <pre>&lt;table width="650" align="center" border="1"&gt;
+  &lt;tr&gt;
+    &lt;td width="150" height="80"&gt;网站标志&lt;/td&gt;
+    &lt;td colspan="2"&gt;广告条&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;导航条&lt;/td&gt;
+    &lt;td&gt;内容一&lt;/td&gt;
+    &lt;td&gt;内容二&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td colspan="3" align="center"&gt;版权信息&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</pre>
+        <p style="margin-top:5px;font-size:0.95rem;">利用表格进行页面排版，效果稳定，但现代网页更推荐 DIV+CSS。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 第7章 表单 封面 ========== -->
+  <section class="slide section">
+    <h2>第7章 表单</h2>
+    <p style="margin-top:12px;font-size:1.1rem;opacity:0.85;">表单标记、输入控件与交互元素</p>
+  </section>
+
+  <!-- ========== 表单概念与基本语法 ========== -->
+  <section class="slide">
+    <h2>7.1 表单的概念</h2>
+    <p>表单用于收集用户信息并提交给服务器，是网站与浏览者沟通的桥梁。</p>
+    <div class="grid2" style="margin-top:10px;">
+      <div class="card">
+        <h3>两个组成部分</h3>
+        <ul>
+          <li>描述表单的 HTML 源代码</li>
+          <li>处理信息的服务器端应用程序（如 ASP.NET、JSP）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>&lt;form&gt; 标记</h3>
+        <p>成对出现，首尾标记之间的部分即为一个表单。</p>
+        <pre style="margin-top:6px;">&lt;form name="..." action="..." method="..."&gt;
+  ...
+&lt;/form&gt;</pre>
+      </div>
+    </div>
+    <ul style="margin-top:8px;">
+      <li><code>name</code>：表单名称，便于脚本控制</li>
+      <li><code>action</code>：指定处理表单信息的服务器端应用程序</li>
+      <li><code>method</code>：提交方式，<code>get</code>（默认）或 <code>post</code></li>
+    </ul>
+  </section>
+
+  <!-- ========== 输入控件 input 概述 ========== -->
+  <section class="slide">
+    <h2>7.2 输入控件 &lt;input&gt;</h2>
+    <p><code>&lt;input&gt;</code> 是单标记，必须嵌套在表单中使用。常用属性：</p>
+    <div class="grid2" style="margin-top:8px;">
+      <div class="card">
+        <h3>核心属性</h3>
+        <ul>
+          <li><code>type</code>：输入类型（必选）</li>
+          <li><code>name</code>：变量名（必选）</li>
+          <li><code>value</code>：初始值 / 提交值</li>
+          <li><code>size</code>：显示宽度</li>
+          <li><code>maxlength</code>：最大输入字符数</li>
+          <li><code>checked</code>：默认选中（单选/复选）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>常用 type 类型</h3>
+        <div class="grid2" style="gap:2px;font-size:0.95rem;">
+          <span>📝 text</span><span>🔒 password</span>
+          <span>✅ checkbox</span><span>🔘 radio</span>
+          <span>📤 submit</span><span>🔄 reset</span>
+          <span>🖼️ image</span><span>📎 file</span>
+          <span>👻 hidden</span><span>🔘 button</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 文本框与密码框 ========== -->
+  <section class="slide">
+    <h2>7.2.1 ~ 7.2.3 文本、密码与按钮</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>文本框 text</h3>
+        <pre>&lt;input type="text" name="yourname" size="15" maxlength="20" value="请输入姓名"&gt;</pre>
+        <p style="margin-top:5px;font-size:0.95rem;"><code>size</code> 为显示宽度，<code>maxlength</code> 为最大字符数。</p>
+      </div>
+      <div class="card">
+        <h3>密码框 password</h3>
+        <pre>&lt;input type="password" name="yourpw" size="15"&gt;</pre>
+        <p style="margin-top:5px;font-size:0.95rem;">输入内容以圆点/星号代替，保护密码安全。</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3>提交按钮 submit / 重置按钮 reset</h3>
+      <div class="grid2">
+        <pre>&lt;input type="submit" value="提交"&gt;</pre>
+        <pre>&lt;input type="reset" value="重置"&gt;</pre>
+      </div>
+      <p style="font-size:0.95rem;margin-top:5px;">表单中必须有提交按钮才能向服务器传送信息；重置按钮清除所有输入并恢复初始状态。</p>
+    </div>
+  </section>
+
+  <!-- ========== 单选、复选、文件、隐藏 ========== -->
+  <section class="slide">
+    <h2>7.2.4 ~ 7.2.8 选择与文件类控件</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>复选框 checkbox</h3>
+        <pre>&lt;input type="checkbox" name="basketball" value="basketball" checked&gt; 篮球</pre>
+        <p style="font-size:0.95rem;">可多选；<code>name</code> 各不同，<code>value</code> 必填。</p>
+      </div>
+      <div class="card">
+        <h3>单选框 radio</h3>
+        <pre>&lt;input type="radio" name="mail" value="10" checked&gt; 10封</pre>
+        <p style="font-size:0.95rem;">同组 <code>name</code> 必须相同，<code>value</code> 各不同。</p>
+      </div>
+      <div class="card">
+        <h3>图像按钮 image</h3>
+        <pre>&lt;input type="image" src="confirm.gif" value="提交"&gt;</pre>
+        <p style="font-size:0.95rem;"><code>src</code> 必需，点击即提交表单。</p>
+      </div>
+      <div class="card">
+        <h3>文件选择 file / 隐藏 hidden</h3>
+        <pre>&lt;input type="file" name="uploadfile"&gt;
+&lt;input type="hidden" name="id" value="1001"&gt;</pre>
+        <p style="font-size:0.95rem;"><code>file</code> 用于上传文件；<code>hidden</code> 在页面中不可见，用于传递隐藏数据。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 文本域、下拉列表 ========== -->
+  <section class="slide">
+    <h2>7.3 ~ 7.4 文本域与下拉列表</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>&lt;textarea&gt; 多行文本域</h3>
+        <pre>&lt;textarea name="suggest" cols="50" rows="3" wrap="soft"&gt;&lt;/textarea&gt;</pre>
+        <ul style="margin-top:5px;font-size:0.95rem;">
+          <li><code>rows</code>：行数（高度）</li>
+          <li><code>cols</code>：列数（宽度）</li>
+          <li><code>wrap</code>：自动换行方式</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>&lt;select&gt; / &lt;option&gt; 下拉列表</h3>
+        <pre>&lt;select name="sports" size="1" multiple&gt;
+  &lt;option value="football" selected&gt;足球&lt;/option&gt;
+  &lt;option value="basketball"&gt;篮球&lt;/option&gt;
+&lt;/select&gt;</pre>
+        <ul style="margin-top:5px;font-size:0.95rem;">
+          <li><code>size</code>：显示选项数，&gt;1 时显示为列表框</li>
+          <li><code>multiple</code>：允许多选</li>
+          <li><code>selected</code>：默认选中</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 按钮、标签、分组 ========== -->
+  <section class="slide">
+    <h2>7.5 按钮、标签与分组</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>&lt;button&gt; 按钮</h3>
+        <pre>&lt;button type="submit"&gt;提交&lt;/button&gt;</pre>
+        <p style="font-size:0.95rem;">内部可放置文本或图像，务必指定 <code>type</code>（button/reset/submit）。</p>
+      </div>
+      <div class="card">
+        <h3>&lt;label&gt; 标签</h3>
+        <pre>&lt;label for="userName"&gt;用户名：&lt;/label&gt;
+&lt;input type="text" id="userName"&gt;</pre>
+        <p style="font-size:0.95rem;">点击标签文字即可聚焦对应控件，<code>for</code> 与 <code>id</code> 对应。</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3>&lt;fieldset&gt; 与 &lt;legend&gt; 分组</h3>
+      <div class="grid2">
+        <pre>&lt;fieldset&gt;
+  &lt;legend&gt;请登录&lt;/legend&gt;
+  &lt;label for="user"&gt;用户名：&lt;/label&gt;
+  &lt;input type="text" id="user"&gt;
+&lt;/fieldset&gt;</pre>
+        <div class="form-demo" style="padding:8px 12px;">
+          <fieldset>
+            <legend>请登录</legend>
+            <label for="demoUser">用户名：</label>
+            <input type="text" id="demoUser" placeholder="请输入用户名">
+          </fieldset>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== 综合实例：用户注册表单 ========== -->
+  <section class="slide">
+    <h2>综合实例 · 用户注册表单</h2>
+    <div class="form-demo">
+      <form action="#" method="post">
+        <fieldset>
+          <legend>基本信息</legend>
+          <p style="margin:6px 0;">
+            <label for="regName">用户名：</label>
+            <input type="text" id="regName" name="username" placeholder="4-16位字符">
+          </p>
+          <p style="margin:6px 0;">
+            <label for="regPwd">密　码：</label>
+            <input type="password" id="regPwd" name="password" placeholder="至少6位">
+          </p>
+        </fieldset>
+        <fieldset>
+          <legend>个人偏好</legend>
+          <p style="margin:6px 0;">性别：
+            <label><input type="radio" name="gender" value="male" checked> 男</label>
+            <label style="margin-left:12px;"><input type="radio" name="gender" value="female"> 女</label>
+          </p>
+          <p style="margin:6px 0;">兴趣：
+            <label><input type="checkbox" name="hobby" value="sports" checked> 运动</label>
+            <label style="margin-left:12px;"><input type="checkbox" name="hobby" value="music"> 音乐</label>
+            <label style="margin-left:12px;"><input type="checkbox" name="hobby" value="reading"> 阅读</label>
+          </p>
+          <p style="margin:6px 0;">
+            <label for="regCity">城市：</label>
+            <select id="regCity" name="city">
+              <option value="bj">北京</option>
+              <option value="sh" selected>上海</option>
+              <option value="gz">广州</option>
+              <option value="sz">深圳</option>
+            </select>
+          </p>
+          <p style="margin:6px 0;">
+            <label for="regIntro">简介：</label>
+            <textarea id="regIntro" name="intro" rows="2" placeholder="简单介绍一下自己..."></textarea>
+          </p>
+        </fieldset>
+        <div style="text-align:center;">
+          <input type="submit" value="注册">
+          <input type="reset" value="重置">
+        </div>
+      </form>
+    </div>
+    <p style="margin-top:8px;font-size:0.92rem;color:#64748b;text-align:center;">综合运用了文本框、密码框、单选、复选、下拉列表、文本域、按钮及 fieldset 分组。</p>
+  </section>
+
+  <!-- ========== 总结 ========== -->
+  <section class="slide">
+    <h2>本章总结 · 表格与表单</h2>
+    <div class="grid2">
+      <div class="card">
+        <h3>📊 表格核心</h3>
+        <ul>
+          <li><code>&lt;table&gt;</code>、<code>&lt;tr&gt;</code>、<code>&lt;td&gt;</code>、<code>&lt;th&gt;</code> 构成基本表格</li>
+          <li><code>&lt;caption&gt;</code> 定义标题</li>
+          <li>属性：border、width/height、bgcolor、background、cellspacing、cellpadding、align</li>
+          <li>行属性：align、valign</li>
+          <li>合并：rowspan（跨行）、colspan（跨列）</li>
+          <li>表格嵌套可实现复杂布局</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📝 表单核心</h3>
+        <ul>
+          <li><code>&lt;form&gt;</code> 定义表单，method 为 get/post</li>
+          <li><code>&lt;input&gt;</code> 根据 type 呈现不同控件：text、password、checkbox、radio、submit、reset、file、hidden、image 等</li>
+          <li><code>&lt;textarea&gt;</code> 多行文本</li>
+          <li><code>&lt;select&gt;</code> + <code>&lt;option&gt;</code> 下拉列表</li>
+          <li><code>&lt;label&gt;</code> 提升可用性；<code>&lt;fieldset&gt;</code> 分组</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:12px;text-align:center;font-size:1.1rem;color:#4338ca;font-weight:bold;">掌握表格与表单，即可构建结构清晰、交互友好的网页！</p>
+  </section>
+
+  <!-- ========== 结束页 ========== -->
+  <section class="slide cover">
+    <h1>谢谢！</h1>
+    <p style="font-size:1.2rem;margin-top:1.2rem;opacity:0.85;">网页设计与开发 · 表格与表单</p>
+    <p style="font-size:1rem;margin-top:0.4rem;opacity:0.7;">清华大学出版社</p>
+  </section>
+
+</div>
+
+<div class="footer-bar">
+  <div>
+    <span id="pageInfo">1 / 1</span>
+  </div>
+  <div class="nav-btns">
+    <button id="prevBtn" onclick="prevSlide()">上一页</button>
+    <button id="nextBtn" onclick="nextSlide()">下一页</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  function showSlide(index) {
+    slides.forEach((s, i) => s.classList.toggle('active', i === index));
+    document.getElementById('pageInfo').textContent = (index + 1) + ' / ' + slides.length;
+    document.getElementById('progress').style.width = ((index + 1) / slides.length * 100) + '%';
+    document.getElementById('prevBtn').disabled = index === 0;
+    document.getElementById('nextBtn').disabled = index === slides.length - 1;
+    document.querySelector('.slide.active').scrollTop = 0;
+  }
+
+  function nextSlide() {
+    if (current < slides.length - 1) { current++; showSlide(current); }
+  }
+
+  function prevSlide() {
+    if (current > 0) { current--; showSlide(current); }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') nextSlide();
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
+    if (e.key === 'Home') { current = 0; showSlide(current); }
+    if (e.key === 'End') { current = slides.length - 1; showSlide(current); }
+  });
+
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = e.changedTouches[0].screenX - touchStartX;
+    if (diff < -50) nextSlide();
+    if (diff > 50) prevSlide();
+  });
+
+  showSlide(current);
+</script>
+
+</body>
+</html>
