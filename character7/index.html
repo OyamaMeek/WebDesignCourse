@@ -13,9 +13,80 @@
         <br>
         <label for="password" >密码<font color="red">*</font>:</label>
         <input type="password" id="password" name="password" placeholder="密码">
+        <label for="confirm_password" >确认密码<font color="red">*</font>:</label>
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="再次输入密码"
+               size="6" required
+        >
+
+
         <br>
         <input type="submit" value="提交">
     </div>
+        <div>
+            <label for="email">邮箱<font color="red">*</font>:</label>
+            <input type="email" id="email" name="email" placeholder="example@gmail.com" required>
+        </div>
+        <div>
+            <label for="phone">手机号<font color="red">*</font>:</label>
+            <input type="tel" id="phone" name="phone" placeholder="13800000000" pattern="[0-9]{11}"  size="30" >
+        </div>
+        <div>
+            <label for="gender">性别<font color="red">*</font>:</label>
+            <input type="radio" id="male" name="gender" value="male" checked>
+            <label for="male">男</label>
+            <input type="radio" id="female" name="gender" value="female">
+            <label for="female">女</label>
+            <input type="radio" id="other" name="gender" value="other">
+            <label for="other">其他</label>
+            <div>
+
+            </div>
+            <label for="">
+                    性别
+            </label>
+            <input type="radio" id="male2" name="gender2" value="男" required>
+            <label for="male2">男</label>
+
+            <input type="radio" id="female2" name="gender2" value="女" required>
+            <label for="female2">女</label
+        </div>
+        <div>
+            <label for="hobby">爱好:</label>
+            <input type="checkbox" id="hobby1" name="hobby" value="reading">
+            <label for="hobby1">阅读</label>
+            <input type="checkbox" id="hobby2" name="hobby" value="sports">
+            <label for="hobby2">运动</label>
+            <input type="checkbox" id="hobby3" name="hobby" value   ="music">
+            <label for="hobby3">音乐</label>
+            <input type="checkbox" id="hobby4" name="hobby" value   ="travel">
+            <label for="hobby4">旅行</label>
+            <input type="checkbox" id="hobby5" name="hobby" value   ="games">
+            <label for="hobby5">编程</label>
+        </div>
+        <div>
+<!--            附件-->
+            <label for="file">上传头像:</label>
+            <input type="file" id="file" name="file">
+        </div>
+        <div>
+            <label for="">图片</label>
+            <input type="image" src="https://webdesigncourse.happanetwork.com/character5/section1/261102.JPG" alt="图片" width="100" height="100">
+        </div>
+        <div>
+            <label for="city">所在城市:</label>
+            <select id="city" name="city">
+                <option value="beijing">北京</option>
+                <option value="shanghai">上海</option>
+                <option value="guangzhou">广州</option>
+                <option value="shenzhen">深圳</option>
+                <option value="hangzhou" selected>杭州</option>
+            </select>
+        </div>
+        <div>
+            <label for="bio">个人简介:</label>
+            <textarea id="bio" name="bio" rows="4" cols="50" placeholder="请简单介绍自己"
+            wrap="virtual"></textarea>
+        </div>
 </form>
 </body>
 </html>

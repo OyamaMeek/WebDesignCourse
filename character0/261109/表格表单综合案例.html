@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>表格与表单综合实例（纯标签版）</title>
+  <style type="text/css">
+    /*已html标签名称为选择类型的选择符，叫标签选择符*/
+    h2{
+      color: blue;
+      font-weight: "黑体";
+      font-size: 20px;
+      font-style: oblique;
+    }
+  </style>
+</head>
+<body bgcolor="#f0f4f8">
+
+<!-- 外层居中 -->
+<center>
+
+  <!-- ================= 布局表格 ================= -->
+  <table border="1" bordercolor="#999999" cellpadding="10" cellspacing="0" width="760" bgcolor="#ffffff">
+    
+    <!-- 头部 -->
+    <tr>
+      <td colspan="2" bgcolor="#6366f1" align="center">
+        <font color="#ffffff" size="5"><b>用户注册信息</b></font><br>
+        <font color="#ffffff" size="2">表格与表单综合实例 · 纯标签版</font>
+      </td>
+    </tr>
+
+    <!-- 主体 -->
+    <tr>
+      <!-- 左侧说明 -->
+      <td width="160" valign="top" bgcolor="#f8fafc">
+        <font color="#4338ca" size="3"><b>📋 填写说明</b></font>
+        <hr color="#c7d2fe">
+        <font size="2" color="#475569">
+          <ul>
+            <li>带 <font color="#ef4444">*</font> 为必填项</li>
+            <li>用户名 4~16 个字符</li>
+            <li>密码至少 6 位</li>
+            <li>请填写真实邮箱</li>
+          </ul>
+        </font>
+        
+        <font color="#4338ca" size="3"><b>🔗 相关链接</b></font>
+        <hr color="#c7d2fe">
+        <font size="2">
+          <ul>
+            <li><a href="#">用户协议</a></li>
+            <li><a href="#">隐私政策</a></li>
+            <li><a href="#">帮助中心</a></li>
+          </ul>
+        </font>
+      </td>
+
+      <!-- 右侧表单 -->
+      <td valign="top" bgcolor="#ffffff">
+        <font color="#0f172a" size="4"><b>注册表单</b></font>
+        <br><br>
+
+        <form onsubmit="return submitForm(event)">
+          <table border="0" cellpadding="5" cellspacing="0" width="100%">
+            <!-- 用户名 -->
+            <tr>
+              <td width="90" align="right"><font size="2"><label for="username">用户名 <font color="#ef4444">*</font></label></font></td>
+              <td><input type="text" id="username" name="username" placeholder="4~16位字符" required size="30"></td>
+            </tr>
+            <!-- 密码 -->
+            <tr>
+              <td align="right"><font size="2"><label for="password">密码 <font color="#ef4444">*</font></label></font></td>
+              <td><input type="password" id="password" name="password" placeholder="至少6位" required size="30"></td>
+            </tr>
+            <!-- 确认密码 -->
+            <tr>
+              <td align="right"><font size="2"><label for="confirm">确认密码 <font color="#ef4444">*</font></label></font></td>
+              <td><input type="password" id="confirm" name="confirm" placeholder="再次输入密码" required size="30"></td>
+            </tr>
+            <!-- 邮箱 -->
+            <tr>
+              <td align="right"><font size="2"><label for="email">电子邮箱 <font color="#ef4444">*</font></label></font></td>
+              <td><input type="email" id="email" name="email" placeholder="example@domain.com" required size="30"></td>
+            </tr>
+            <!-- 手机号 -->
+            <tr>
+              <td align="right"><font size="2"><label for="phone">手机号码</label></font></td>
+              <td><input type="tel" id="phone" name="phone" placeholder="选填，11位手机号" size="30"></td>
+            </tr>
+            <!-- 性别 -->
+            <tr>
+              <td align="right"><font size="2">性别</font></td>
+              <td>
+                <font size="2">
+                  <input type="radio" name="gender" value="男" checked> 男 &nbsp;
+                  <input type="radio" name="gender" value="女"> 女 &nbsp;
+                  <input type="radio" name="gender" value="保密"> 保密
+                </font>
+              </td>
+            </tr>
+            <!-- 兴趣爱好 -->
+            <tr>
+              <td align="right"><font size="2">兴趣爱好</font></td>
+              <td>
+                <font size="2">
+                  <input type="checkbox" name="hobby" value="阅读"> 阅读 &nbsp;
+                  <input type="checkbox" name="hobby" value="运动"> 运动 &nbsp;
+                  <input type="checkbox" name="hobby" value="音乐"> 音乐 &nbsp;
+                  <input type="checkbox" name="hobby" value="编程"> 编程
+                </font>
+              </td>
+            </tr>
+            <!-- 城市 -->
+            <tr>
+              <td align="right"><font size="2"><label for="city">所在城市</label></font></td>
+              <td>
+                <select id="city" name="city">
+                  <option value="北京">北京</option>
+                  <option value="上海" selected>上海</option>
+                  <option value="广州">广州</option>
+                  <option value="深圳">深圳</option>
+                  <option value="杭州">杭州</option>
+                </select>
+              </td>
+            </tr>
+            <!-- 个人简介 -->
+            <tr>
+              <td align="right"><font size="2"><label for="intro">个人简介</label></font></td>
+              <td><textarea id="intro" name="intro" placeholder="简单介绍一下自己..." cols="38" rows="3"></textarea></td>
+            </tr>
+            <!-- 按钮 -->
+            <tr>
+              <td colspan="2" align="center">
+                <br>
+                <input type="submit" value="✅ 提交">
+                &nbsp;&nbsp;
+                <input type="reset" value="🔄 重置">
+              </td>
+            </tr>
+          </table>
+        </form>
+      </td>
+    </tr>
+
+    <!-- 底部 -->
+    <tr>
+      <td colspan="2" bgcolor="#1e293b" align="center">
+        <font color="#cbd5e1" size="1">© 2025 网页设计与开发课程 · 表格与表单综合实例</font>
+      </td>
+    </tr>
+  </table>
+
+  <br>
+
+  <!-- ================= 数据展示表格 ================= -->
+  <table border="1" bordercolor="#999999" cellpadding="8" cellspacing="0" width="760" bgcolor="#ffffff">
+    <tr>
+      <td colspan="6" align="left" bgcolor="#ffffff" bordercolor="#ffffff">
+        <font color="#0f172a" size="3"><b>📊 已提交的用户数据</b></font>
+      </td>
+    </tr>
+    <tr bgcolor="#e0f2fe">
+      <th><font size="2" color="#0369a1">用户名</font></th>
+      <th><font size="2" color="#0369a1">性别</font></th>
+      <th><font size="2" color="#0369a1">邮箱</font></th>
+      <th><font size="2" color="#0369a1">手机号</font></th>
+      <th><font size="2" color="#0369a1">城市</font></th>
+      <th><font size="2" color="#0369a1">兴趣爱好</font></th>
+    </tr>
+    <tbody id="dataBody">
+      <tr>
+        <td colspan="6" align="center">
+          <font color="#94a3b8" size="2"><i>暂无数据，请在上方表单中填写并提交。</i></font>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</center>
+
+<script>
+  function submitForm(event) {
+    event.preventDefault(); // 阻止页面刷新
+
+    var form = event.target;
+    var username = form.username.value.trim();
+    var password = form.password.value;
+    var confirm = form.confirm.value;
+    var email = form.email.value.trim();
+    var phone = form.phone.value.trim();
+    var city = form.city.value;
+
+    // 获取性别
+    var gender = "男";
+    var radios = form.querySelectorAll('input[name="gender"]');
+    for (var i = 0; i < radios.length; i++) {
+      if (radios[i].checked) gender = radios[i].value;
+    }
+
+    // 获取兴趣爱好
+    var hobbyList = [];
+    var checkboxes = form.querySelectorAll('input[name="hobby"]');
+    for (var j = 0; j < checkboxes.length; j++) {
+      if (checkboxes[j].checked) hobbyList.push(checkboxes[j].value);
+    }
+    var hobbies = hobbyList.length > 0 ? hobbyList.join("、") : "—";
+
+    // 简单验证
+    if (password !== confirm) {
+      alert("❌ 两次输入的密码不一致！");
+      return false;
+    }
+    if (username.length < 4 || username.length > 16) {
+      alert("❌ 用户名需 4~16 个字符！");
+      return false;
+    }
+
+    // 获取数据表格的 tbody
+    var tbody = document.getElementById("dataBody");
+
+    // 移除空数据提示
+    var emptyTip = tbody.querySelector("td[colspan='6']");
+    if (emptyTip) {
+      tbody.innerHTML = "";
+    }
+
+    // 创建新行并添加到表格
+    var newRow = document.createElement("tr");
+    newRow.innerHTML =
+      "<td align='center'><font size='2'>" + username + "</font></td>" +
+      "<td align='center'><font size='2'>" + gender + "</font></td>" +
+      "<td><font size='2'>" + email + "</font></td>" +
+      "<td align='center'><font size='2'>" + (phone || "—") + "</font></td>" +
+      "<td align='center'><font size='2'>" + city + "</font></td>" +
+      "<td><font size='2'>" + hobbies + "</font></td>";
+    tbody.appendChild(newRow);
+
+    // 提交后重置表单
+    form.reset();
+
+    return false;
+  }
+</script>
+
+</body>
+</html>
